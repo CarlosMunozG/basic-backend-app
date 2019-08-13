@@ -1,14 +1,38 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 const userSchema = new Schema({
-  username: String,
-  password: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  image: String,
+  postalCode: Number,
+  location: {
+    type: String,
+    latitude: Number,
+    longitude: Number
+  },
+  friends: [{
+    type: ObjectId,
+    ref: 'User'
+  }],
+  favouritePlaces: [{
+    type: ObjectId,
+    ref: 'Place'
+  }]
 }, {
   timestamps: {
     createdAt: 'created_at',
     updatedAt: 'updated_at'
-  },
+  }
 });
 
 const User = mongoose.model('User', userSchema);
