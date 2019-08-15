@@ -15,9 +15,11 @@ const placeSchema = new Schema({
   area: String,
   postalCode: Number,
   location: {
-    type: String,
-    latitude: Number,
-    longitude: Number
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   locationType: {
     type: String,
@@ -70,6 +72,8 @@ const placeSchema = new Schema({
     updatedAt: 'updated_at'
   }
 });
+
+placeSchema.index({ location: '2dsphere' });
 
 const Place = mongoose.model('Place', placeSchema);
 

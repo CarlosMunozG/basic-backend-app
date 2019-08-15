@@ -16,9 +16,11 @@ const userSchema = new Schema({
   image: String,
   postalCode: Number,
   location: {
-    type: String,
-    latitude: Number,
-    longitude: Number
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
   },
   friends: [{
     type: ObjectId,

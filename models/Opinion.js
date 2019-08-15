@@ -28,6 +28,8 @@ const opinionSchema = new Schema({
   }
 });
 
+opinionSchema.index({ location: '2dsphere' });
+
 const Opinion = mongoose.model('Opinion', opinionSchema);
 
 module.exports = Opinion;

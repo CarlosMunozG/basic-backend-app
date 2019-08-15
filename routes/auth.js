@@ -49,7 +49,9 @@ router.post(
 
     try {
       const user = await User.findOne({ username }, 'username');
+
       if (user) {
+        res.status(422).json({ message: 'user already login' });
         return next(createError(422));
       } else {
         const salt = bcrypt.genSaltSync(10);
