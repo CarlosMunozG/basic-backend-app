@@ -12,7 +12,6 @@ const placeSchema = new Schema({
     type: ObjectId,
     ref: 'User'
   },
-  area: String,
   postalCode: Number,
   location: {
     type: {
