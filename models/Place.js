@@ -9,42 +9,27 @@ const placeSchema = new Schema({
     unique: true
   },
   owner: {
-    type: ObjectId,
-    ref: 'User'
+    type: String
   },
   postalCode: Number,
-  location: {
-    type: {
-      type: String,
-      default: 'Point'
-    },
-    coordinates: [Number]
-  },
+  // location: {
+  //   type: {
+  //     type: String,
+  //     default: 'Point'
+  //   },
+  //   coordinates: [Number]
+  // },
   locationType: {
     type: String,
     required: true,
     enum: ['urban', 'rural']
   },
-  bestMomentOfYear: {
-    type: String,
-    required: true,
-    enum: [
-      'January',
-      'February',
-      'March',
-      'April',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ]
-  },
+  bestMomentOfYear: [{
+    type: String
+  }],
   description: {
     type: String,
-    description: true
+    required: true
   },
   inOutDoors: [{
     type: String,
@@ -56,14 +41,16 @@ const placeSchema = new Schema({
     required: true,
     enum: ['free', 'paid']
   }],
-  category: {
-    type: String,
-    required: true,
-    enum: ['Sports', 'Leisure', 'Sleep', 'Eating', 'Health', 'Summer', 'Winter', 'Water']
-  },
+  categories: [{
+    type: String
+  }],
   likes: [{
     type: ObjectId,
     ref: 'User'
+  }],
+  images: [{
+    type: String,
+    required: true
   }]
 }, {
   timestamps: {

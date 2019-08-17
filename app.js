@@ -12,6 +12,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const auth = require('./routes/auth');
+const users = require('./routes/users');
 const places = require('./routes/places');
 
 mongoose
@@ -51,6 +52,11 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  app.locals.currentUser = req.session.currentUser;
+  next();
+});
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -58,6 +64,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', auth);
+app.use('/users', users);
 app.use('/places', places);
 
 // catch 404 and forward to error handler

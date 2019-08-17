@@ -13,15 +13,25 @@ const userSchema = new Schema({
     required: true,
     unique: true
   },
-  image: String,
-  postalCode: Number,
-  location: {
-    type: {
-      type: String,
-      default: 'Point'
-    },
-    coordinates: [Number]
+  email: {
+    type: String
   },
+  images: [{
+    type: String
+  }],
+  postalCode: {
+    type: Number
+  },
+  location: {
+    type: String
+  },
+  // location: {
+  //   type: {
+  //     type: String,
+  //     default: 'Point'
+  //   },
+  //   coordinates: [Number]
+  // },
   friends: [{
     type: ObjectId,
     ref: 'User'
