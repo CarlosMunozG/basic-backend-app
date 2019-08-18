@@ -6,12 +6,9 @@ const Place = require('../models/Place.js');
 const User = require('../models/User.js');
 
 router.get('/', async (req, res, next) => {
-  const currentUserId = req.session.currentUser._id;
   try {
     const listOfPlaces = await Place.find();
-    listOfPlaces.currentUserId = currentUserId;
     res.status(200).json({ listOfPlaces });
-    console.log(listOfPlaces);
   } catch (error) {
     next(error);
   }
