@@ -16,6 +16,16 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.get('/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const newUser = await User.findById(id).populate('favouritePlaces').populate('friends');
+    res.status(200).json({ newUser });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put('/update', async (req, res, next) => {
   const user = req.session.currentUser;
   const { username, password, images, location, email } = req.body.user;
@@ -23,6 +33,18 @@ router.put('/update', async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10);
     const hashPass = bcrypt.hashSync(password, salt);
     const updated = await User.findByIdAndUpdate(user._id, { username, password: hashPass, images, location, email }, { new: true });
+    res.status(200).json(updated);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/addFriend/:id', async (req, res, next) => {
+  const { id } = req.params;
+  const user = req.session.currentUser;
+  try {
+    const updated = await User.findByIdAndUpdate(user._id, { $push: { friends: id } }, { new: true });
+    console.log('usuario: ', updated);
     res.status(200).json(updated);
   } catch (error) {
     next(error);

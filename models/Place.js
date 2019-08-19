@@ -9,7 +9,8 @@ const placeSchema = new Schema({
     unique: true
   },
   owner: {
-    type: String
+    type: ObjectId,
+    ref: 'User'
   },
   postalCode: Number,
   // location: {
