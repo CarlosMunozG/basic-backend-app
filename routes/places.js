@@ -51,6 +51,7 @@ router.post('/add', async (req, res, next) => {
 router.put('/:id/update', async (req, res, next) => {
   const { id } = req.params;
   const placeUpdated = req.body;
+  console.log(placeUpdated);
   try {
     const updated = await Place.findByIdAndUpdate(id, placeUpdated, { new: true });
     res.status(200).json(updated);

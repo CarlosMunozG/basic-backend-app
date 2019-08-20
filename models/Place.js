@@ -13,13 +13,13 @@ const placeSchema = new Schema({
     ref: 'User'
   },
   postalCode: Number,
-  // location: {
-  //   type: {
-  //     type: String,
-  //     default: 'Point'
-  //   },
-  //   coordinates: [Number]
-  // },
+  location: {
+    type: {
+      type: String,
+      default: 'Point'
+    },
+    coordinates: [Number]
+  },
   locationType: {
     type: String,
     required: true,
