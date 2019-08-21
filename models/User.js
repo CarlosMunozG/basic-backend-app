@@ -39,6 +39,10 @@ const userSchema = new Schema({
   favouritePlaces: [{
     type: ObjectId,
     ref: 'Place'
+  }],
+  opinions: [{
+    type: ObjectId,
+    ref: 'Opinion'
   }]
 }, {
   timestamps: {

@@ -19,7 +19,8 @@ const opinionSchema = new Schema({
   },
   rating: {
     type: Number,
-    required: true
+    required: true,
+    enum: [0, 1, 2, 3, 4, 5]
   }
 }, {
   timestamps: {

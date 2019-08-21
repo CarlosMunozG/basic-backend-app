@@ -52,6 +52,10 @@ const placeSchema = new Schema({
   images: [{
     type: String,
     required: true
+  }],
+  opinions: [{
+    type: ObjectId,
+    ref: 'Opinion'
   }]
 }, {
   timestamps: {
