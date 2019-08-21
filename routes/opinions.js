@@ -15,16 +15,6 @@ const User = require('../models/User.js');
 //   }
 // });
 
-// router.get('/myplaces', async (req, res, next) => {
-//   const userId = req.session.currentUser._id;
-//   try {
-//     const listOfMyPlaces = await Place.find({ owner: userId });
-//     res.status(200).json({ listOfMyPlaces });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -61,39 +51,19 @@ router.put('/:id/update', async (req, res, next) => {
   }
 });
 
-// router.put('/:id/like', async (req, res, next) => {
-//   const { id } = req.params;
-//   const user = req.session.currentUser;
-//   try {
-//     const updated = await Place.findByIdAndUpdate(id, { $push: { likes: user._id } });
-//     const userUpdated = await User.findByIdAndUpdate(user._id, { $push: { favouritePlaces: id } });
-//     res.status(200).json({ updated, userUpdated });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.put('/:id/unlike', async (req, res, next) => {
-//   const { id } = req.params;
-//   const user = req.session.currentUser;
-//   try {
-//     const updated = await Place.findByIdAndUpdate(id, { $pull: { likes: user._id } });
-//     // const userUpdated = await User.findByIdAndUpdate(user._id, { $push: { favouritePlaces: id } });
-//     res.status(200).json(updated);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.delete('/:id/delete', async (req, res, next) => {
-//   const { id } = req.params;
-//   console.log('aquiiiiiiii', id);
-//   try {
-//     await Place.findByIdAndDelete(id);
-//     res.status(200).json({ message: 'place deleted' });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+router.delete('/:id/delete', async (req, res, next) => {
+  const userId = req.session.currentUser._id;
+  const { id } = req.params;
+  try {
+    await User.findByIdAndUpdate(userId, { $pull: { opinions: id } });
+    const currentOpinion = await Opinion.findById(id);
+    const placeOpinion = currentOpinion.place;
+    await Place.findByIdAndUpdate(placeOpinion);
+    await Opinion.findByIdAndDelete(id);
+    res.status(200).json({ message: 'place deleted' });
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
