@@ -25,6 +25,16 @@ router.get('/myplaces', async (req, res, next) => {
   }
 });
 
+router.get('/myFavouritePlaces', async (req, res, next) => {
+  const userId = req.session.currentUser._id;
+  try {
+    const listOfMyPlaces = await User.findById(userId).populate('favouritePlaces');
+    res.status(200).json({ listOfMyPlaces });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -78,8 +88,8 @@ router.put('/:id/unlike', async (req, res, next) => {
   const user = req.session.currentUser;
   try {
     const updated = await Place.findByIdAndUpdate(id, { $pull: { likes: user._id } });
-    // const userUpdated = await User.findByIdAndUpdate(user._id, { $push: { favouritePlaces: id } });
-    res.status(200).json(updated);
+    const userUpdated = await User.findByIdAndUpdate(user._id, { $pull: { favouritePlaces: id } });
+    res.status(200).json({ updated, userUpdated });
   } catch (error) {
     next(error);
   }
