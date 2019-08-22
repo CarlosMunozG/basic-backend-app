@@ -8,8 +8,18 @@ const User = require('../models/User.js');
 
 router.get('/', async (req, res, next) => {
   try {
-    const user = req.session.currentUser;
-    const newUser = await User.findById(user._id);
+    const listOfUsers = await User.find();
+    res.status(200).json({ listOfUsers });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/myFavourites', async (req, res, next) => {
+  const user = req.session.currentUser;
+  try {
+    const newUser = await User.findById(user._id).populate('friends').populate('favouritePlaces').populate('opinions');
+    console.log(newUser);
     res.status(200).json({ newUser });
   } catch (error) {
     next(error);
@@ -43,9 +53,19 @@ router.put('/addFriend/:id', async (req, res, next) => {
   const { id } = req.params;
   const user = req.session.currentUser;
   try {
-    const updated = await User.findByIdAndUpdate(user._id, { $push: { friends: id } }, { new: true });
-    console.log('usuario: ', updated);
-    res.status(200).json(updated);
+    const friendAdded = await User.findByIdAndUpdate(user._id, { $push: { friends: id } });
+    res.status(200).json(friendAdded);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/deleteFriend/:id', async (req, res, next) => {
+  const { id } = req.params;
+  const user = req.session.currentUser;
+  try {
+    const friendDeleted = await User.findByIdAndUpdate(user._id, { $pull: { friends: id } });
+    res.status(200).json(friendDeleted);
   } catch (error) {
     next(error);
   }
