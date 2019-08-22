@@ -27,12 +27,13 @@ router.post(
     try {
       const user = await User.findOne({ username });
       if (!user) {
+        res.status(404).json({ error: 'We cant find than name' });
         next(createError(404));
       } else if (bcrypt.compareSync(password, user.password)) {
         req.session.currentUser = user;
         return res.status(200).json(user);
       } else {
-        next(createError(401));
+        res.status(401).json({ error: 'Name or the Password are incorrect' });
       }
     } catch (error) {
       next(error);
@@ -51,8 +52,7 @@ router.post(
       const user = await User.findOne({ username }, 'username');
 
       if (user) {
-        res.status(422).json({ message: 'user already login' });
-        return next(createError(422));
+        return res.status(422).json({ error: 'User already exists. Try with another name' });
       } else {
         const salt = bcrypt.genSaltSync(10);
         const hashPass = bcrypt.hashSync(password, salt);
