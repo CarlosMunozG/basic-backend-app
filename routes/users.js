@@ -30,7 +30,6 @@ router.get('/myFavourites', async (req, res, next) => {
   const user = req.session.currentUser;
   try {
     const newUser = await User.findById(user._id).populate('friends').populate('favouritePlaces').populate('opinions');
-    console.log(newUser);
     res.status(200).json({ newUser });
   } catch (error) {
     next(error);

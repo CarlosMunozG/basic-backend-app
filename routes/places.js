@@ -2,9 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
+const createError = require('http-errors');
+
 const Place = require('../models/Place.js');
 const User = require('../models/User.js');
-const Opinion = require('../models/User.js');
+
+const {
+  validationFormPlace
+} = require('../helpers/middlewaresPlaces.js');
 
 router.get('/', async (req, res, next) => {
   try {
@@ -47,10 +52,16 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/add', async (req, res, next) => {
+router.post('/add', validationFormPlace(), async (req, res, next) => {
   const newPlace = req.body;
   newPlace.owner = req.session.currentUser._id;
+  const listOfPlacesName = await Place.find();
   try {
+    listOfPlacesName.forEach(placeName => {
+      if (newPlace.name === placeName.name) {
+        return next(createError(428));
+      }
+    });
     const createdPlace = await Place.create(newPlace);
     res.status(200).json(createdPlace);
     await User.findByIdAndUpdate(newPlace.owner, { $push: { favouritePlaces: createdPlace._id } });
@@ -59,11 +70,19 @@ router.post('/add', async (req, res, next) => {
   }
 });
 
-router.put('/:id/update', async (req, res, next) => {
+router.put('/:id/update', validationFormPlace(), async (req, res, next) => {
   const { id } = req.params;
   const placeUpdated = req.body;
-  console.log(placeUpdated);
+  const listOfPlacesName = await Place.find();
+  // const listOfPlacesNameWithoutTheActual = listOfPlacesName.filter(place => {
+  //  return place.id !== id;
+  // });
   try {
+    listOfPlacesName.forEach(placeName => {
+      if (placeUpdated.name === placeName.name) {
+        return next(createError(428));
+      }
+    });
     const updated = await Place.findByIdAndUpdate(id, placeUpdated, { new: true });
     res.status(200).json(updated);
   } catch (error) {
@@ -97,7 +116,6 @@ router.put('/:id/unlike', async (req, res, next) => {
 
 router.delete('/:id/delete', async (req, res, next) => {
   const { id } = req.params;
-  console.log('aquiiiiiiii', id);
   try {
     await Place.findByIdAndDelete(id);
     res.status(200).json({ message: 'place deleted' });

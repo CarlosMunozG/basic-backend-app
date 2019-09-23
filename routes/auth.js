@@ -2,7 +2,6 @@
 
 const express = require('express');
 const createError = require('http-errors');
-
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
@@ -14,7 +13,14 @@ const {
   validationLoggin
 } = require('../helpers/middlewares');
 
-router.get('/me', isLoggedIn(), (req, res, next) => {
+router.get('/me', isLoggedIn(), async (req, res, next) => {
+  const userId = req.session.currentUser._id;
+  try {
+    const updatedUser = await User.findById(userId).populate('friends').populate('favouritePlaces').populate('opinions');
+    req.session.currentUser = updatedUser;
+  } catch (error) {
+    next(error);
+  }
   res.json(req.session.currentUser);
 });
 
@@ -27,13 +33,12 @@ router.post(
     try {
       const user = await User.findOne({ username });
       if (!user) {
-        res.status(404).json({ error: 'We cant find than name' });
         next(createError(404));
       } else if (bcrypt.compareSync(password, user.password)) {
         req.session.currentUser = user;
         return res.status(200).json(user);
       } else {
-        res.status(401).json({ error: 'Name or the Password are incorrect' });
+        next(createError(401));
       }
     } catch (error) {
       next(error);
@@ -47,12 +52,10 @@ router.post(
   validationLoggin(),
   async (req, res, next) => {
     const { username, password } = req.body;
-
     try {
       const user = await User.findOne({ username }, 'username');
-
       if (user) {
-        return res.status(422).json({ error: 'User already exists. Try with another name' });
+        next(createError(402));
       } else {
         const salt = bcrypt.genSaltSync(10);
         const hashPass = bcrypt.hashSync(password, salt);
@@ -72,9 +75,7 @@ router.post('/logout', isLoggedIn(), (req, res, next) => {
 });
 
 router.get('/private', isLoggedIn(), (req, res, next) => {
-  res.status(200).json({
-    message: 'This is a private message'
-  });
+  res.status(200).json({ message: 'This is a private message' });
 });
 
 module.exports = router;
